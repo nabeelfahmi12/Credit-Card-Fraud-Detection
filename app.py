@@ -18,8 +18,8 @@ from io import StringIO
 
 app = Flask(__name__)
 
-
-data_df = pd.read_csv("creditcard.csv")
+url = "https://raw.githubusercontent.com/Credit-Card-Fraud-Detection/creditcard.csv"
+data_df = pd.read_csv(url)
 
 # Extract hour from the 'Time' column
 # Extract hour from the 'Time' column
