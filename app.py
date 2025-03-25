@@ -222,5 +222,4 @@ def final_predict():
 def notebook():
     return render_template("jupiternotebook.html")
 
-if __name__ == "__main__":
-    app.run()
+
