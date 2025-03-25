@@ -3,8 +3,7 @@ flask==3.1.0
 joblib==1.4.2
 matplotlib-base==3.10.0
 numpy==1.26.4
-numpy-base==1.26.4
 plotly==5.24.1
 scikit-learn==1.6.1
 scipy==1.15.1
-‎pandas==2.2.3
+pandas==2.2.3
