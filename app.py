@@ -23,6 +23,7 @@ data_df = pd.read_csv("creditcard.csv")
 
 # Extract hour from the 'Time' column
 # Extract hour from the 'Time' column
+print("Available columns:", df.columns.tolist()) 
 data_df['Hour'] = (data_df['Time'] // 3600).astype(int)
 
 # Aggregation statistics for transaction Amount
