@@ -18,24 +18,24 @@ from io import StringIO
 
 app = Flask(__name__)
 
-url = "https://raw.githubusercontent.com/Credit-Card-Fraud-Detection/creditcard.csv"
-data_df = pd.read_csv(url)
+#url = "https://raw.githubusercontent.com/Credit-Card-Fraud-Detection/creditcard.csv"
+#data_df = pd.read_csv(url)
 
 # Extract hour from the 'Time' column
 # Extract hour from the 'Time' column
-print("Available columns:", data_df.columns.tolist()) 
-data_df['Hour'] = (data_df['Time'] // 3600).astype(int)
+#print("Available columns:", data_df.columns.tolist()) 
+#data_df['Hour'] = (data_df['Time'] // 3600).astype(int)
 
 # Aggregation statistics for transaction Amount
 agg_metrics = ['min', 'max', 'count', 'sum', 'mean', 'median', 'var']
 
 # Group by Hour and Class, computing multiple statistics on Amount
-df_hour = (data_df.groupby(['Hour', 'Class'])['Amount']
-      .agg(agg_metrics)
-      .rename(columns={'count': 'Transactions'})  # Rename 'count' for better clarity
-      .reset_index()
-     )
-df_hour['Total_Amount'] = df_hour['mean'] * df_hour['Transactions']
+#df_hour = (data_df.groupby(['Hour', 'Class'])['Amount']
+#      .agg(agg_metrics)
+#      .rename(columns={'count': 'Transactions'})  # Rename 'count' for better clarity
+#      .reset_index()
+ #    )
+#df_hour['Total_Amount'] = df_hour['mean'] * df_hour['Transactions']
 
 # Load the trained model
 MODEL_PATH = "model/CatBoost_fraud_detection_model.pkl"
@@ -57,78 +57,79 @@ def index():
 def analytics():
 
     # 📊 Hourly Transactions Graph
-    fig_hourly = px.bar(df_hour, x='Hour', y='Transactions', color='Class',
-                        title="📊 Hourly Transactions (Fraud vs. Non-Fraud)",
-                        labels={'Transactions': 'Number of Transactions', 'Hour': 'Hour of the Day'},
-                        barmode='group', text='Transactions')
+#    fig_hourly = px.bar(df_hour, x='Hour', y='Transactions', color='Class',
+#                        title="📊 Hourly Transactions (Fraud vs. Non-Fraud)",
+#                        labels={'Transactions': 'Number of Transactions', 'Hour': 'Hour of the Day'},
+#                        barmode='group', text='Transactions')
 
-    fig_hourly.add_trace(go.Scatter(x=df_hour['Hour'], y=df_hour['Total_Amount'],
-                                    mode='lines+markers', name="Total Transaction Amount",
-                                    line=dict(color="black", width=2)))
-
+#    fig_hourly.add_trace(go.Scatter(x=df_hour['Hour'], y=df_hour['Total_Amount'],
+#                                    mode='lines+markers', name="Total Transaction Amount",
+#                                    line=dict(color="black", width=2)))
+#
     # 🍕 Fraud vs Non-Fraud Pie Chart
-    fraud_ratio = data_df['Class'].value_counts(normalize=True) * 100
-    fig_pie = px.pie(names=['Non-Fraud', 'Fraud'], values=fraud_ratio,
-                     title="Fraudulent Transactions Percentage",
-                     color_discrete_map={'Non-Fraud': 'blue', 'Fraud': 'red'})
+#    fraud_ratio = data_df['Class'].value_counts(normalize=True) * 100
+#    fig_pie = px.pie(names=['Non-Fraud', 'Fraud'], values=fraud_ratio,
+#                     title="Fraudulent Transactions Percentage",
+#                     color_discrete_map={'Non-Fraud': 'blue', 'Fraud': 'red'})
 
     # 🔥 Feature Correlation Heatmap (Converted to Plotly)
-    correlation_matrix = data_df.drop(columns=['Time']).corr()
-    fig_heatmap = go.Figure(data=go.Heatmap(
-        z=correlation_matrix.values,
-        x=correlation_matrix.columns,
-        y=correlation_matrix.columns,
-        colorscale='rdylbu',  # ✅ Use a valid Plotly colorscale
-        hoverongaps=False
-    ))
-    fig_heatmap.update_layout(title="Feature Correlation Heatmap")
+#    correlation_matrix = data_df.drop(columns=['Time']).corr()
+#    fig_heatmap = go.Figure(data=go.Heatmap(
+#        z=correlation_matrix.values,
+#        x=correlation_matrix.columns,
+#        y=correlation_matrix.columns,
+#        colorscale='rdylbu',  # ✅ Use a valid Plotly colorscale
+#        hoverongaps=False
+#    ))
+#    fig_heatmap.update_layout(title="Feature Correlation Heatmap")
 
     # 📊 Feature Distributions
-    features = data_df.columns[:-2]  # Excluding 'Time' and 'Class'
-    t0 = data_df[data_df["Class"] == 0]  # Non-Fraud
-    t1 = data_df[data_df["Class"] == 1]  # Fraud
+#    features = data_df.columns[:-2]  # Excluding 'Time' and 'Class'
+#    t0 = data_df[data_df["Class"] == 0]  # Non-Fraud
+#    t1 = data_df[data_df["Class"] == 1]  # Fraud
 
-    fig_dist = sp.make_subplots(rows=8, cols=4, subplot_titles=features)
+#    fig_dist = sp.make_subplots(rows=8, cols=4, subplot_titles=features)
 
-    for i, feature in enumerate(features):
-        row = i // 4 + 1
-        col = i % 4 + 1
-        fig_dist.add_trace(go.Histogram(x=t0[feature], histnorm='probability density',
-                                        name=f"{feature} (Non-Fraud)", opacity=0.6, marker_color='blue'), row=row, col=col)
-        fig_dist.add_trace(go.Histogram(x=t1[feature], histnorm='probability density',
-                                        name=f"{feature} (Fraud)", opacity=0.6, marker_color='red'), row=row, col=col)
-
-    fig_dist.update_layout(height=2400, width=1500, title_text="Feature Distributions for Fraud vs Non-Fraud",
-                           showlegend=False)
+#    for i, feature in enumerate(features):
+#        row = i // 4 + 1
+#        col = i % 4 + 1
+#        fig_dist.add_trace(go.Histogram(x=t0[feature], histnorm='probability density',
+#                                        name=f"{feature} (Non-Fraud)", opacity=0.6, marker_color='blue'), row=row, col=col)
+#        fig_dist.add_trace(go.Histogram(x=t1[feature], histnorm='probability density',
+#                                        name=f"{feature} (Fraud)", opacity=0.6, marker_color='red'), row=row, col=col)
+#
+#    fig_dist.update_layout(height=2400, width=1500, title_text="Feature Distributions for Fraud vs Non-Fraud",
+#                           showlegend=False)
 
     # 📈 Time Density Plot
-    class_0 = data_df.loc[data_df['Class'] == 0]["Time"]
-    class_1 = data_df.loc[data_df['Class'] == 1]["Time"]
-    hist_data = [class_0, class_1]
-    group_labels = ['Not Fraud', 'Fraud']
-    fig_time_density = ff.create_distplot(hist_data, group_labels, show_hist=False, show_rug=False)
-    fig_time_density.update_layout(title='Credit Card Transactions Time Density Plot', xaxis=dict(title='Time [s]'))
+#    class_0 = data_df.loc[data_df['Class'] == 0]["Time"]
+#    class_1 = data_df.loc[data_df['Class'] == 1]["Time"]
+#    hist_data = [class_0, class_1]
+#    group_labels = ['Not Fraud', 'Fraud']
+#    fig_time_density = ff.create_distplot(hist_data, group_labels, show_hist=False, show_rug=False)
+#    fig_time_density.update_layout(title='Credit Card Transactions Time Density Plot', xaxis=dict(title='Time [s]'))
 
     # 💰 Fraudulent Transactions Scatter Plot
-    fraud = data_df.loc[data_df['Class'] == 1]
-    trace = go.Scatter(x=fraud['Time'], y=fraud['Amount'], name="Amount",
-                       marker=dict(color='red', line=dict(color='red', width=1), opacity=0.5),
-                       text=fraud['Amount'], mode="markers")
-
-    fig_fraud_amount = go.Figure(data=[trace])
-    fig_fraud_amount.update_layout(title='Amount of Fraudulent Transactions', xaxis_title='Time [s]', yaxis_title='Amount')
+#    fraud = data_df.loc[data_df['Class'] == 1]
+#    trace = go.Scatter(x=fraud['Time'], y=fraud['Amount'], name="Amount",
+#                       marker=dict(color='red', line=dict(color='red', width=1), opacity=0.5),
+#                       text=fraud['Amount'], mode="markers")
+#
+#    fig_fraud_amount = go.Figure(data=[trace])
+#    fig_fraud_amount.update_layout(title='Amount of Fraudulent Transactions', xaxis_title='Time [s]', yaxis_title='Amount')
 
     # Convert plots to JSON
-    plots = {
-        "fig_hourly": fig_hourly.to_json(),
-        "fig_pie": fig_pie.to_json(),
-        "fig_heatmap": fig_heatmap.to_json(),
-        "fig_dist": fig_dist.to_json(),
-        "fig_time_density": fig_time_density.to_json(),
-        "fig_fraud_amount": fig_fraud_amount.to_json(),
-    }
+#    plots = {
+#        "fig_hourly": fig_hourly.to_json(),
+#        "fig_pie": fig_pie.to_json(),
+#        "fig_heatmap": fig_heatmap.to_json(),
+#        "fig_dist": fig_dist.to_json(),
+#        "fig_time_density": fig_time_density.to_json(),
+#        "fig_fraud_amount": fig_fraud_amount.to_json(),
+#    }
 
-    return render_template("analytics.html", plots=plots)
+#    return render_template("analytics.html", plots=plots)
+    return render_template("analytics.html")
 
 
 # 🔮 Prediction Page - User Inputs or File Upload
