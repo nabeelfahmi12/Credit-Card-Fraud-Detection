@@ -19,11 +19,19 @@ from io import StringIO
 app = Flask(__name__)
 
 #url = "https://raw.githubusercontent.com/Credit-Card-Fraud-Detection/creditcard.csv"
-#data_df = pd.read_csv(url)
+def safe_load_data():
+    try:
+        url = "https://raw.githubusercontent.com/your-repo/data.csv"
+        headers = {'User-Agent': 'MyApp/1.0'}
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        return pd.read_csv(StringIO(response.text))
+    except Exception:
+        return pd.read_csv("creditcard.csv")  # Fallback
 
+data_df = safe_load_data()
 # Extract hour from the 'Time' column
-# Extract hour from the 'Time' column
-#print("Available columns:", data_df.columns.tolist()) 
+print("Available columns:", data_df.columns.tolist()) 
 #data_df['Hour'] = (data_df['Time'] // 3600).astype(int)
 
 # Aggregation statistics for transaction Amount
