@@ -8,7 +8,7 @@ COPY . /CreditCardFraud
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir catboost==1.2.3 --find-links https://pypi.org/simple/
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.t
+RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 CMD ["python", "./app.py"]

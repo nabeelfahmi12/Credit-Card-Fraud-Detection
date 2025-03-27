@@ -25,19 +25,33 @@ data_df = pd.read_csv("data/creditcard.csv")
 # Extract hour from the 'Time' column
 data_df['Hour'] = (data_df['Time'] // 3600).astype(int)
 
-# Aggregation statistics for transaction Amount
-agg_metrics = ['min', 'max', 'count', 'sum', 'mean', 'median', 'var']
+# Define aggregation metrics
+agg_metrics = {
+    'Amount': ['count', 'sum', 'mean', 'median', 'min', 'max', 'std']
+}
 
-# Group by Hour and Class, computing multiple statistics on Amount
-df_hour = (data_df.groupby(['Hour', 'Class'])['Amount']
-      .agg(agg_metrics)
-      .rename(columns={'count': 'Transactions'})  # Rename 'count' for better clarity
-      .reset_index()
-     )
-df_hour['Total_Amount'] = df_hour
-with open(MODEL_PATH, "rb") as f:
-    model = pickle.load(f)
+# Correct aggregation approach:
+df_hour = (data_df.groupby(['Hour', 'Class'])
+             .agg(
+                 Transactions=('Amount', 'count'),
+                 Total_Amount=('Amount', 'sum'),
+                 Mean_Amount=('Amount', 'mean'),
+                 Median_Amount=('Amount', 'median'),
+                 Min_Amount=('Amount', 'min'),
+                 Max_Amount=('Amount', 'max'),
+                 Std_Amount=('Amount', 'std')
+             )
+             .reset_index()
+            )
 
+# Calculate additional metrics
+df_hour['Avg_Transaction_Value'] = df_hour['Total_Amount'] / df_hour['Transactions']
+
+
+# Load the model from the file
+model_filename_CatBoost = "model/final_model_CatBoost_correct.pkl"
+model = joblib.load(model_filename_CatBoost)
+print("Model loaded successfully!")
 
 # 🚀 Introduction Page - Homeswaaaaaaaaaaa
 @app.route("/")
@@ -185,13 +199,12 @@ def predict():
                 print("pca ", pca_features)
                 preprocessor = ColumnTransformer(
                     transformers=[
-                        ('robust', RobustScaler(), numeric_features),  # Scale first & last column
-                        ('standard', StandardScaler(), pca_features)  # Scale PCA features
+                        ('robust', RobustScaler(), numeric_features),
+                        ('passthrough', 'passthrough', pca_features)
                     ])
 
-                X_new_normalized = preprocessor.fit_transform(input_df)
                 print("Data is normalized")
-
+                X_new_normalized = preprocessor.fit_transform(input_df)
                 # 7️⃣ **Make Single Prediction**
                 prediction = model.predict(X_new_normalized)
                 if prediction[0] == 0:
