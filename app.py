@@ -18,10 +18,10 @@ from io import StringIO
 
 app = Flask(__name__)
 
-#url = "https://raw.githubusercontent.com/Credit-Card-Fraud-Detection/creditcard.csv"
-data_df = pd.read_csv("creditcard.csv")  # Fallback
 
+data_df = pd.read_csv("data/creditcard.csv")
 
+# Extract hour from the 'Time' column
 # Extract hour from the 'Time' column
 data_df['Hour'] = (data_df['Time'] // 3600).astype(int)
 
@@ -37,7 +37,7 @@ df_hour = (data_df.groupby(['Hour', 'Class'])['Amount']
 df_hour['Total_Amount'] = df_hour['mean'] * df_hour['Transactions']
 
 # Load the trained model
-MODEL_PATH = "model/CatBoost_fraud_detection_model.pkl"
+MODEL_PATH = "final_model_CatBoost.pkl"
 # Load the model from the file
 
 loaded_model = joblib.load(MODEL_PATH)
@@ -222,7 +222,4 @@ def notebook():
     return render_template("jupiternotebook.html")
 
 if __name__ == "__main__":
-    # This is used when running locally only. When deploying to Google App
-    # Engine, a webserver process such as Gunicorn will serve the app. You
-    # can configure startup instructions by adding `entrypoint` to app.yaml.
-    app.run(host="127.0.0.1", port=8080, debug=True)
+    app.run(debug=True)
