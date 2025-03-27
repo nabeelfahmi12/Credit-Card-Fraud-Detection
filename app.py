@@ -34,19 +34,12 @@ df_hour = (data_df.groupby(['Hour', 'Class'])['Amount']
       .rename(columns={'count': 'Transactions'})  # Rename 'count' for better clarity
       .reset_index()
      )
-df_hour['Total_Amount'] = df_hour['mean'] * df_hour['Transactions']
-
-# Load the trained model
-MODEL_PATH = "final_model_CatBoost.pkl"
-# Load the model from the file
-
-loaded_model = joblib.load(MODEL_PATH)
-print("Model loaded successfully!")
+df_hour['Total_Amount'] = df_hour
 with open(MODEL_PATH, "rb") as f:
     model = pickle.load(f)
 
 
-# 🚀 Introduction Page - Home
+# 🚀 Introduction Page - Homeswaaaaaaaaaaa
 @app.route("/")
 def index():
     return render_template("index.html")
